@@ -112,9 +112,12 @@ export const Addresses = () => {
     const originalAddresses = [...addresses];
     setAddresses(addresses.filter((addr) => addr._id !== address._id));
 
-    fetch(`${import.meta.env.VITE_BASE_API_URL}/${address._id}`, {
-      method: "DELETE",
-    })
+    fetch(
+      `${import.meta.env.VITE_BASE_API_URL}/user/addresses/${address._id}`,
+      {
+        method: "DELETE",
+      }
+    )
       .then((res) => {
         if (!res.ok) throw new Error("Delete failed ");
         return res.json();
