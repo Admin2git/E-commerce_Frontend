@@ -13,8 +13,13 @@ export const ProductsByCategory = () => {
     sortBy: "Price - Low to High",
   });
 
-  const { addToCart, addToWishlist,removeFromWishlist, searchTerm, setSearchTerm } =
-    UseCateContext();
+  const {
+    addToCart,
+    addToWishlist,
+    removeFromWishlist,
+    searchTerm,
+    setSearchTerm,
+  } = UseCateContext();
 
   const { categoryId } = useParams();
   console.log(categoryId);
@@ -58,7 +63,14 @@ export const ProductsByCategory = () => {
   });
 
   if (loading) {
-    return <div className="container pt-4 pb-5 ">Loading...</div>;
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "50vh" }}
+      >
+        Loading...
+      </div>
+    );
   }
 
   if (error) {
@@ -121,22 +133,29 @@ export const ProductsByCategory = () => {
             </div>
             <div className="mt-4">
               <h6>Price</h6>
-              <input
-                type="range"
-                min="50"
-                max="5000"
-                value={filters.price[1]}
-                onChange={(e) =>
-                  handleFilterChange("price", [
-                    filters.price[0],
-                    e.target.value,
-                  ])
-                }
-                className="form-control"
-              />
-              <p>
-                Price: ₹{filters.price[0]} - ₹{filters.price[1]}
-              </p>
+              <div className="mb-3">
+                <label htmlFor="priceRange" className="form-label">
+                  Max Price: ₹{filters.price[1]}
+                </label>
+                <input
+                  id="priceRange"
+                  type="range"
+                  className="form-range"
+                  min="50"
+                  max="5000"
+                  value={filters.price[1]}
+                  onChange={(e) =>
+                    handleFilterChange("price", [
+                      filters.price[0],
+                      Number(e.target.value),
+                    ])
+                  }
+                />
+                <div className="d-flex justify-content-between">
+                  <small>₹50</small>
+                  <small>₹5000</small>
+                </div>
+              </div>
             </div>
 
             <div className="mt-4">
@@ -241,7 +260,9 @@ export const ProductsByCategory = () => {
                         toast.success("Added to cart");
                       }}
                       onAddToWishlist={() => addToWishlist(product)}
-                      onRemoveFromWishlist={()=>removeFromWishlist(product._id)}
+                      onRemoveFromWishlist={() =>
+                        removeFromWishlist(product._id)
+                      }
                     />
                   </div>
                 ))
@@ -254,6 +275,12 @@ export const ProductsByCategory = () => {
       </div>
     </>
   ) : (
-    <p className="container pt-4 pb-5 "> Loading...</p>
+    <p
+      className="d-flex justify-content-center align-items-center"
+      style={{ height: "50vh" }}
+    >
+      {" "}
+      Loading...
+    </p>
   );
 };

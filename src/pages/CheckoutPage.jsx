@@ -22,7 +22,7 @@ export const CheckoutPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editingAddressId, setEditingAddressId] = useState(null);
 
-  const { cart } = UseCateContext();
+  const { cart, clearCart } = UseCateContext();
   console.log(cart);
 
   // 1. Fetch addresses on load
@@ -77,6 +77,7 @@ export const CheckoutPage = () => {
       })
       .then(() => {
         toast.success("Order placed successfully ✅");
+        clearCart();
       })
       .catch((error) => {
         console.error(error);
@@ -93,7 +94,9 @@ export const CheckoutPage = () => {
       setAddresses(updatedAddresses);
 
       fetch(
-        `${import.meta.env.VITE_BASE_API_URL}/user/addresses/${editingAddressId}`,
+        `${
+          import.meta.env.VITE_BASE_API_URL
+        }/user/addresses/${editingAddressId}`,
         {
           method: "POST",
           headers: {
@@ -112,8 +115,6 @@ export const CheckoutPage = () => {
         .catch((error) => {
           console.error(error);
         });
-
-      
     } else {
       const newAddress = { ...formData };
       setAddresses([...addresses, newAddress]);
@@ -197,18 +198,15 @@ export const CheckoutPage = () => {
     setShowForm(true);
   };
 
+  if (loading) return <div className="d-flex justify-content-center align-items-center"  style={{ height: '50vh' }}>Loading...</div>;
+  if (error)
+    return <div className="container pt-4 pb-5 ">Error loading product</div>;
+
   return (
     <>
       <Header />
       <div className="container mt-4">
-        <h3>Select Delivery Address</h3>
-
-        {loading && <div>Loading...</div>}
-        {error && <div>Error loading addresses</div>}
-
-        {!loading && !error && addresses.length === 0 && (
-          <p>No saved addresses found. Please add one.</p>
-        )}
+        <h3>Select Delivery Address</h3>       
 
         <div className="row d-flex justify-content-between ">
           <div className="col-md-6 mt-3  justify-content-center">

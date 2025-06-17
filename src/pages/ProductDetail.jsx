@@ -37,7 +37,7 @@ export const ProductDetail = () => {
     }
   };
 
-  if (loading) return <div className="container pt-4 pb-5 ">Loading...</div>;
+  if (loading) return <div className="d-flex justify-content-center align-items-center"  style={{ height: '50vh' }}>Loading...</div>;
   if (error)
     return <div className="container pt-4 pb-5 ">Error loading product</div>;
 
@@ -192,6 +192,6 @@ export const ProductDetail = () => {
       </div>
     </>
   ) : (
-    <p className="container pt-4 pb-5 ">Loading...</p>
+    <p className="d-flex justify-content-center align-items-center"  style={{ height: '50vh' }}>Loading...</p>
   );
 };

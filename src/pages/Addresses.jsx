@@ -21,8 +21,7 @@ export const Addresses = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editingAddressId, setEditingAddressId] = useState(null);
 
-  const { cart } = UseCateContext();
-  console.log(cart);
+
 
   // 1. Fetch addresses on load
   const { data, loading, error } = useFetch(
@@ -150,16 +149,17 @@ export const Addresses = () => {
     setShowForm(true);
   };
 
+  if (loading) return <div className="d-flex justify-content-center align-items-center"  style={{ height: '50vh' }}>Loading...</div>;
+  if (error)
+    return <div className="container pt-4 pb-5 ">Error loading product</div>;
+
   return (
     <>
       <Header />
       <div className="container my-4">
         <h3>Your Addresses</h3>
 
-        {loading && <div>Loading...</div>}
-        {error && <div>Error loading addresses</div>}
-
-        {!loading && !error && addresses.length === 0 && (
+        {!loading && !error && data?.length === 0 && (
           <p>No saved addresses found. Please add one.</p>
         )}
 

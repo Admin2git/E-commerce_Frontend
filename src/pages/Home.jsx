@@ -12,7 +12,7 @@ export const Home = () => {
   );
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="d-flex justify-content-center align-items-center"  style={{ height: '50vh' }}>Loading...</div>;
   }
 
   if (error) {
@@ -59,6 +59,6 @@ export const Home = () => {
       <Footer />
     </>
   ) : (
-    <p className="container pt-4 pb-5 ">Loading...</p>
+    <p className="d-flex justify-content-center align-items-center"  style={{ height: '50vh' }}>Loading...</p>
   );
 };
