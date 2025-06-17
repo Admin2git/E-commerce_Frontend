@@ -53,7 +53,7 @@ export const WishlistPage = () => {
                       className="btn text-white w-100"
                       onClick={() => {
                         addToCart(item);
-                        toast.success("Added to cart");
+                        removeFromWishlist(item._id);
                       }}
                     >
                       Move to Cart

@@ -86,7 +86,7 @@ export const CartPage = () => {
                           className="btn btn-outline-secondary w-55"
                           onClick={() => {
                             addToWishlist(item);
-                           
+                            removeFromCart(item._id);
                           }}
                         >
                           Move to Wishlist

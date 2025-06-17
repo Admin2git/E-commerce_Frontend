@@ -47,8 +47,10 @@ export function EcommerceProvider({ children }) {
       if (existingItemIndex !== -1) {
         const updatedCart = [...prevCart];
         updatedCart[existingItemIndex].quantity += quantity;
+        toast.success("Added to cart");
         return updatedCart;
       } else {
+        toast.success("Added to cart");
         return [...prevCart, { ...product, quantity }];
       }
     });
