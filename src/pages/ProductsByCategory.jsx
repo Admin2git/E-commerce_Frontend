@@ -257,7 +257,6 @@ export const ProductsByCategory = () => {
                       rating={product.rating}
                       onAddToCart={() => {
                         addToCart(product);
-                        toast.success("Added to cart");
                       }}
                       onAddToWishlist={() => addToWishlist(product)}
                       onRemoveFromWishlist={() =>

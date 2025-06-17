@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import useFetch from "../useFetch";
 import { useContext } from "react";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const CategoryContext = createContext();
 const UseCateContext = () => useContext(CategoryContext);
@@ -12,6 +13,15 @@ export function EcommerceProvider({ children }) {
   const [cart, setCart] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
+
+  const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+  const subtotal = cart.reduce(
+    (sum, item) => sum + item.price * (item.quantity || 1),
+    0
+  );
+  const deliveryCharges = subtotal > 0 ? 499 : 0;
+  const totalAmount = subtotal + deliveryCharges;
 
   // Load cart from localStorage on mount
   useEffect(() => {
@@ -91,6 +101,46 @@ export function EcommerceProvider({ children }) {
     setWishlist((prev) => prev.filter((item) => item._id !== productId));
   };
 
+  const navigate = useNavigate();
+
+  const orderData = {
+    addressId: selectedAddressId,
+    items: cart.map((item) => ({
+      productId: item._id,
+      quantity: item.quantity || 1,
+    })),
+    totalPrice: totalAmount,
+  };
+
+  const handlePlaceOrder = () => {
+    if (!selectedAddressId || cart.length === 0) {
+      toast.error("Please select an address and check your cart");
+      return;
+    }
+
+    console.log(orderData);
+
+    fetch(`${import.meta.env.VITE_BASE_API_URL}/orders/place`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(orderData),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Order failed");
+        return res.json();
+      })
+      .then(() => {
+        toast.success("Order placed successfully ✅");
+        navigate("/checkoutPage/orderSuccess");
+        clearCart();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   return (
     <CategoryContext.Provider
       value={{
@@ -108,6 +158,14 @@ export function EcommerceProvider({ children }) {
         clearCart,
         addToWishlist,
         removeFromWishlist,
+        selectedAddressId,
+        setSelectedAddressId,
+        handlePlaceOrder,
+        totalItems,
+        subtotal,
+        deliveryCharges,
+        totalAmount,
+        orderData,
       }}
     >
       {children}

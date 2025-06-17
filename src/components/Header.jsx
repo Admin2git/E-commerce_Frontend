@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import UseCateContext from "../contexts/CategoryContext";
 
 export const Header = () => {
@@ -7,6 +7,9 @@ export const Header = () => {
   const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
   console.log(setSearchTerm);
 
+  const location = useLocation();
+  const isCategoryPage = location.pathname === "/";
+  const isProductPage = location.pathname.includes("/products/category");
   return (
     <header className="">
       <nav className="navbar navbar-expand-lg  shadow-sm  bg-body-secondary py-3">
@@ -37,7 +40,13 @@ export const Header = () => {
               <input
                 className="form-control"
                 type=""
-                placeholder="Search for products, categories and more"
+                placeholder={
+                  isCategoryPage
+                    ? "Search for categories..."
+                    : isProductPage
+                    ? "Search for products..."
+                    : "Search..."
+                }
                 aria-label="Search"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}

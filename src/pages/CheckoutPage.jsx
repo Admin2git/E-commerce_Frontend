@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import useFetch from "../useFetch";
 import UseCateContext from "../contexts/CategoryContext";
 import { Header } from "../components/Header";
-import { Link } from "react-router-dom";
 
 export const CheckoutPage = () => {
   const [addresses, setAddresses] = useState([]);
-  const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     userId: "6849315540bff452c746b05e",
@@ -22,7 +20,17 @@ export const CheckoutPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editingAddressId, setEditingAddressId] = useState(null);
 
-  const { cart, clearCart } = UseCateContext();
+  const {
+    cart,
+    clearCart,
+    selectedAddressId,
+    setSelectedAddressId,
+    handlePlaceOrder,
+    totalItems,
+    subtotal,
+    deliveryCharges,
+    totalAmount,
+  } = UseCateContext();
   console.log(cart);
 
   // 1. Fetch addresses on load
@@ -31,14 +39,6 @@ export const CheckoutPage = () => {
   );
   console.log(data);
 
-  const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-  const subtotal = cart.reduce(
-    (sum, item) => sum + item.price * (item.quantity || 1),
-    0
-  );
-  const deliveryCharges = subtotal > 0 ? 499 : 0;
-  const totalAmount = subtotal + deliveryCharges;
-
   //  Set addresses only once after data loads
   useEffect(() => {
     if (data && data.length > 0) {
@@ -46,43 +46,6 @@ export const CheckoutPage = () => {
       setSelectedAddressId(data[0]._id); // Select first address by default
     }
   }, [data]);
-  // 2. Place order function
-  const handlePlaceOrder = () => {
-    if (!selectedAddressId || cart.length === 0) {
-      toast.error("Please select an address and check your cart");
-      return;
-    }
-
-    const orderData = {
-      addressId: selectedAddressId,
-      items: cart.map((item) => ({
-        productId: item._id,
-        quantity: item.quantity || 1,
-      })),
-      totalPrice: totalAmount,
-    };
-
-    console.log(orderData);
-
-    fetch(`${import.meta.env.VITE_BASE_API_URL}/orders/place`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(orderData),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Order failed");
-        return res.json();
-      })
-      .then(() => {
-        toast.success("Order placed successfully ✅");
-        clearCart();
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
 
   const handleSaveAddress = () => {
     if (isEditing) {
@@ -198,7 +161,15 @@ export const CheckoutPage = () => {
     setShowForm(true);
   };
 
-  if (loading) return <div className="d-flex justify-content-center align-items-center"  style={{ height: '50vh' }}>Loading...</div>;
+  if (loading)
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "50vh" }}
+      >
+        Loading...
+      </div>
+    );
   if (error)
     return <div className="container pt-4 pb-5 ">Error loading product</div>;
 
@@ -206,7 +177,7 @@ export const CheckoutPage = () => {
     <>
       <Header />
       <div className="container mt-4">
-        <h3>Select Delivery Address</h3>       
+        <h3>Select Delivery Address</h3>
 
         <div className="row d-flex justify-content-between ">
           <div className="col-md-6 mt-3  justify-content-center">

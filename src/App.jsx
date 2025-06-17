@@ -12,11 +12,12 @@ import { CheckoutPage } from "./pages/CheckoutPage";
 import { UserProfilePage } from "./pages/UserProfilePage";
 import { Addresses } from "./pages/Addresses";
 import { OrderHistory } from "./pages/OrderHistory";
+import PlaceOrderSuccess from "./pages/PlaceOrderSuccess";
 
 function App() {
   return (
-    <EcommerceProvider>
-      <Router>
+    <Router>
+      <EcommerceProvider>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route
@@ -30,9 +31,13 @@ function App() {
           <Route path="/profilePage" element={<UserProfilePage />} />
           <Route path="/addresses" element={<Addresses />} />
           <Route path="/orderHistory" element={<OrderHistory />} />
+          <Route
+            path="/checkoutPage/orderSuccess"
+            element={<PlaceOrderSuccess  />}
+          />
         </Routes>
-      </Router>
-    </EcommerceProvider>
+      </EcommerceProvider>
+    </Router>
   );
 }
 
