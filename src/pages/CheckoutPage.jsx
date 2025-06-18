@@ -34,7 +34,7 @@ export const CheckoutPage = () => {
   console.log(cart);
 
   // 1. Fetch addresses on load
-  const { data, loading, error } = useFetch(
+  const { data, loading, error, refetch } = useFetch(
     `${import.meta.env.VITE_BASE_API_URL}/user/addresses`
   );
   console.log(data);
@@ -74,6 +74,7 @@ export const CheckoutPage = () => {
         })
         .then(() => {
           toast.success("Address updated successfully ✅");
+          refetch();
         })
         .catch((error) => {
           console.error(error);
@@ -94,6 +95,7 @@ export const CheckoutPage = () => {
         })
         .then(() => {
           toast.success("Address added successfully ✅");
+          refetch();
         })
         .catch((error) => {
           console.error(error);

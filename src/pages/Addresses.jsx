@@ -3,7 +3,6 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { Header } from "../components/Header";
 import useFetch from "../useFetch";
-import UseCateContext from "../contexts/CategoryContext";
 
 export const Addresses = () => {
   const [addresses, setAddresses] = useState([]);
@@ -21,10 +20,7 @@ export const Addresses = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editingAddressId, setEditingAddressId] = useState(null);
 
-
-
-  // 1. Fetch addresses on load
-  const { data, loading, error } = useFetch(
+  const { data, loading, error, refetch } = useFetch(
     `${import.meta.env.VITE_BASE_API_URL}/user/addresses`
   );
   console.log(data);
@@ -38,11 +34,6 @@ export const Addresses = () => {
   const handleSaveAddress = () => {
     if (isEditing) {
       const updatedAddress = { ...formData, _id: editingAddressId };
-      // ✅ Step 1: Optimistically update local state
-      const updatedAddresses = addresses.map((addr) =>
-        addr._id === editingAddressId ? updatedAddress : addr
-      );
-      setAddresses(updatedAddresses);
 
       fetch(
         `${
@@ -62,16 +53,13 @@ export const Addresses = () => {
         })
         .then(() => {
           toast.success("Address updated successfully ✅");
+          refetch();
         })
         .catch((error) => {
           console.error(error);
         });
-
-      //setAddresses(updatedAddresses);
-      // toast.success("Address updated");
     } else {
       const newAddress = { ...formData };
-      setAddresses([...addresses, newAddress]);
       fetch(`${import.meta.env.VITE_BASE_API_URL}/user/addresses`, {
         method: "POST",
         headers: {
@@ -85,12 +73,11 @@ export const Addresses = () => {
         })
         .then(() => {
           toast.success("Address added successfully ✅");
+          refetch();
         })
         .catch((error) => {
           console.error(error);
         });
-
-      //toast.success("Address added");
     }
     setFormData({
       userId: "6849315540bff452c746b05e",
@@ -128,7 +115,6 @@ export const Addresses = () => {
         console.error(error);
         toast.error("Delete failed ❌");
 
-        // 🔁 Rollback to previous state
         setAddresses(originalAddresses);
       });
   };
@@ -149,7 +135,15 @@ export const Addresses = () => {
     setShowForm(true);
   };
 
-  if (loading) return <div className="d-flex justify-content-center align-items-center"  style={{ height: '50vh' }}>Loading...</div>;
+  if (loading)
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "50vh" }}
+      >
+        Loading...
+      </div>
+    );
   if (error)
     return <div className="container pt-4 pb-5 ">Error loading product</div>;
 
